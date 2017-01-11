@@ -6,25 +6,28 @@ ip = inputParser;
 %#ok<*NVREPL> dont warn about addParamValue
 addParamValue(ip,'subject', 0, @isnumeric);
 addParamValue(ip,'group', 1, @is.numeric);
+addParamValue(ip,'refreshRate', 60, @isnumeric);
 addParamValue(ip,'debugLevel',1, @isnumeric);
 parse(ip,varargin{:});
 input = ip.Results;
 
 rng('shuffle'); % set up and seed the randon number generator, so lists get properly permuted
 
+
+constants = setupConstants(input, ip);
+
 if input.debugLevel >= 1
-    inputHandler = makeInputHandlerFcn('Robot');
+    inputHandler = makeInputHandlerFcn('GoodRobot');
 elseif input.debugLevel == 0
     inputHandler = makeInputHandlerFcn('KbQueue');
 end
 
 
-constants = setupConstants(input, ip);
 [window, constants] = windowSetup(constants, input);
 
-data = experimentWrapper(input);
-
-writeTable(data, [constants.fName, '.csv'])
+% data = experimentWrapper(input);
+% 
+% writeTable(data, [constants.fName, '.csv'])
 
 %% end of the experiment %%
 windowCleanup(constants)
@@ -82,17 +85,17 @@ else
 end
 
 try
-    PsychImaging('PrepareConfiguration');
-    PsychImaging('AddTask', 'LeftView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
-    PsychImaging('AddTask', 'RightView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
-    
+%     PsychImaging('PrepareConfiguration');
+%     PsychImaging('AddTask', 'LeftView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
+%     PsychImaging('AddTask', 'RightView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
+%     
     
     [window, constants.winRect] = Screen('OpenWindow', ...
         constants.screenNumber, ...
         (2/3)*WhiteIndex(constants.screenNumber) , round(constants.screen_scale),...
-        1); % final value is stereo mode. To be adjusted
-    Screen(p.window,'BlendFunction','GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    Priority(MaxPriority(p.window));
+        [], []); % final value is stereo mode. To be adjusted
+%     Screen(p.window,'BlendFunction','GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+    Priority(MaxPriority(window));
     
     
     % define some landmark locations to be used throughout
@@ -106,11 +109,11 @@ try
     % Get some the inter-frame interval, refresh rate, and the size of our window
     constants.ifi = Screen('GetFlipInterval', window);
     constants.hertz = FrameRate(window); % hertz = 1 / ifi
-    %        constants.nominalHertz = Screen('NominalFrameRate', window); %
+%     constants.nominalHertz = Screen('NominalFrameRate', window); %
     %        pretty sure this just does the same thing as the line above...
     [constants.width, constants.height] = Screen('DisplaySize', constants.screenNumber); %in mm CAUTION, MIGHT BE WRONG!!
     
-    checkRefreshRate(constants);
+    checkRefreshRate(constants, input);
     
     % Font Configuration
     Screen('TextFont',window, 'Arial');  % Set font to Arial
@@ -124,9 +127,9 @@ end
 end
 
 %%
-function checkRefreshRate(constants)
+function checkRefreshRate(constants, input)
 
-if abs(constants.hertz - 120) > 2
+if abs(constants.hertz - input.refreshRate) > 2
     windowCleanup(constants);
     disp('Set the refresh rate to the requested rate')
 end
