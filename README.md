@@ -1,2 +1,2 @@
-# occular_dominance
-Matlab/PTB Script to test for occular dominance
+# PTB-boilerplate
+A basic template to build Psychtoolbox experiments on top of
