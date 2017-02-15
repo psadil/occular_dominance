@@ -1,5 +1,5 @@
 function constants = setupConstants(input, ip)
-defaults = ip.UsingDefaults; 
+defaults = ip.UsingDefaults;
 
 constants.exp_onset = GetSecs; % record the time the experiment began
 constants.device = [];
@@ -32,7 +32,8 @@ if any(ismember(defaults, expose))
         return
     else
         input = filterStructs(input,guiInput);
-        input.subject = str2double(input.subject);
+        %         input.subject = str2double(input.subject);
+        input.subject = input.subject;
     end
 else
     [validSubNum, msg] = subjectValidator(input.subject, '.csv', input.debugLevel);
@@ -47,7 +48,6 @@ if ~exist(fullfile(constants.subDir), 'dir')
 end
 constants.fName = fullfile(constants.subDir,...
     strjoin({'subject', num2str(input.subject)},'_'));
-
 
 end
 

@@ -1,4 +1,4 @@
-function [ response, rt, exit_flag ] = elicitArrowResponse( window, responseHandler, arrowTex, rightEye, keys, mondrians, expParams, constants )
+function [ response, rt, exit_flag ] = elicitArrowResponse( window, responseHandler, arrowTex, rightEye, keys, mondrians, expParams, constants, answer )
 %collectResponses Show arrow until participant makes response, and collect
 %that response
 response = {'NO RESPONSE'};
@@ -15,10 +15,7 @@ KbQueueCreate(constants.device, keys.arrows+keys.escape);
 KbQueueStart(constants.device);
 
 
-for eye = 0:1
-    Screen('SelectStereoDrawBuffer',window.pointer,eye);
-    Screen('FillRect',window.pointer,1,CenterRect([0 0 8 8],window.shifts));
-end
+drawFixation(window);
 vbl = Screen('Flip', window.pointer); % Display cue and prompt
 
 for tick=0:expParams.nTicks-1
@@ -31,7 +28,7 @@ for tick=0:expParams.nTicks-1
     
     % flip only in synch with mondrian presentation rate
     vbl = Screen('Flip', window.pointer, vbl + (expParams.mondrianHertz-slack)*window.ifi );
-    [keys_pressed, press_times] = responseHandler(constants.device);
+    [keys_pressed, press_times] = responseHandler(constants.device, answer, expParams.robotDelay);
     
     if ~isempty(keys_pressed)
         % There should ideally be only one, keypress ever. If there happens
