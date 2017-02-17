@@ -13,7 +13,7 @@ switch debugLevel
         % Level 0: normal experiment
         expParams.mondrianHertz = 8;
         expParams.iti = 1; % seconds to wait between each trial
-        expParams.nTrials = 100;
+        expParams.nTrials = 150;
         expParams.arrowDur = 100; % max duration until arrows are at full contrast
     case 1
         % Level 1: Run through all trials giving correct answers. Speed at

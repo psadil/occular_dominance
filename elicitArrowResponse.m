@@ -1,4 +1,5 @@
-function [ response, rt, exit_flag ] = elicitArrowResponse( window, responseHandler, arrowTex, rightEye, keys, mondrians, expParams, constants, answer )
+function [ response, rt, exit_flag ] = elicitArrowResponse( window, responseHandler,...
+    arrowTex, rightEye, keys, mondrians, expParams, constants, answer, bothEyes )
 %collectResponses Show arrow until participant makes response, and collect
 %that response
 response = {'NO RESPONSE'};
@@ -24,7 +25,7 @@ for tick=0:expParams.nTicks-1
     drawStimulus(window, prompt, rightEye,...
         arrowTex, mondrians(mod(tick,size(mondrians,2))+1).tex,...
         expParams.alpha.mondrian(mod(tick, size(expParams.alpha.mondrian,2))+1),...
-        expParams.alpha.arrow(min(100, tick+1)));
+        expParams.alpha.arrow(min(100, tick+1)), bothEyes);
     
     % flip only in synch with mondrian presentation rate
     vbl = Screen('Flip', window.pointer, vbl + (expParams.mondrianHertz-slack)*window.ifi );
@@ -52,7 +53,7 @@ end
 
 end
 
-function drawStimulus(window, prompt, rightEye, arrowTex, mondrianTex, alpha_mondrian,alpha_arrow)
+function drawStimulus(window, prompt, rightEye, arrowTex, mondrianTex, alpha_mondrian,alpha_arrow, bothEyes)
 
 
 for eye = 0:1
@@ -61,7 +62,7 @@ for eye = 0:1
     % draw Mondrians
     Screen('DrawTexture', window.pointer, mondrianTex,[],[],[],[],alpha_mondrian);
     
-    if eye==rightEye
+    if eye==rightEye || bothEyes
         % draw arrow
         Screen('DrawTexture', window.pointer, arrowTex,[],[],[],[],alpha_arrow);
     end

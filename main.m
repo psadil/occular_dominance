@@ -44,20 +44,24 @@ for trial = 1:expParams.nTrials
     [ data.response(trial), data.rt(trial), exit_flag] = ...
         elicitArrowResponse(window, responseHandler,...
         arrows(data.correctDirection(trial)).tex, data.rightEye(trial),...
-        keys, mondrians, expParams, constants, answers(data.correctDirection(trial)));
+        keys, mondrians, expParams, constants, answers(data.correctDirection(trial)),...
+        data.bothEyes(trial));
     
     if exit_flag==1
         break;
     end
     
     if mod(trial,10)==0 && trial ~= expParams.nTrial
+        showReminder(window, ['You have completed', num2str(trial), 'out of', num2str(expParams.nTrials), 'trials'],...
+            keys, constants, responseHandler, expParams);
+        
         showReminder(window, 'Remember to keep your eyes focusd on the center white square',...
-            keys,constants,responseHandler,expParams);
+            keys, constants, responseHandler, expParams);
     end
     
     % inter-trial-interval
     iti(window, expParams.iti);
-       
+    
 end
 
 %% save data and exit
