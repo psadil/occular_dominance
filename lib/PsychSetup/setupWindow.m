@@ -1,5 +1,6 @@
 function window = setupWindow(input, constants, expParams)
 
+PsychDefaultSetup(2); % assert OpenGL install, unify keys, fix color range
 ListenChar(-1);
 HideCursor;
 

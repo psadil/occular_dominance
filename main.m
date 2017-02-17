@@ -16,8 +16,6 @@ input = ip.Results;
 
 
 %% setup
-rng('shuffle'); % set up and seed the randon number generator
-PsychDefaultSetup(2); % assert OpenGL install, unify keys, fix color range
 constants = setupConstants(input, ip);
 expParams = setupExpParams(input.debugLevel);
 

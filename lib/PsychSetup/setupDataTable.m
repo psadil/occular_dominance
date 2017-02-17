@@ -1,8 +1,12 @@
 function [ data ] = setupDataTable( expParams, input, demographics )
 %setupDataTable setup data table for this participant. 
 
+rng('shuffle');
+scurr = rng; % set up and seed the randon number generator
+
 data = table;
 data.subject = repelem(input.subject, expParams.nTrials)';
+data.seed = repelem(scurr.Seed, expParams.nTrials)';
 data.dominantEye = repelem({input.dominantEye}, expParams.nTrials)';
 data.sex = repelem(demographics(1), expParams.nTrials)';
 data.ethnicity = repelem(demographics(2), expParams.nTrials)';
