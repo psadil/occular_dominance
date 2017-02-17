@@ -1,10 +1,12 @@
-function [ response, rt, exit_flag ] = elicitArrowResponse( window, responseHandler,...
+function [ response, rt, exit_flag, tStart, tEnd ] = elicitArrowResponse( window, responseHandler,...
     arrowTex, rightEye, keys, mondrians, expParams, constants, answer, bothEyes )
 %collectResponses Show arrow until participant makes response, and collect
 %that response
 response = {'NO RESPONSE'};
 rt = NaN;
 exit_flag = 0;
+tStart = 0;
+tEnd = 0;
 % Priority(2);
 % Priority()
 
@@ -31,6 +33,10 @@ for tick=0:expParams.nTicks-1
     vbl = Screen('Flip', window.pointer, vbl + (expParams.mondrianHertz-slack)*window.ifi );
     [keys_pressed, press_times] = responseHandler(constants.device, answer, expParams.robotDelay);
     
+    if tick == 0
+       tStart = vbl;
+    end
+    
     if ~isempty(keys_pressed)
         % There should ideally be only one, keypress ever. If there happens
         % to be more than one keypress, only take the first one.
@@ -45,6 +51,7 @@ for tick=0:expParams.nTicks-1
         else  
             response = {KbName(key)};
             rt = time;
+            tEnd = vbl;
             break;
         end
     end
