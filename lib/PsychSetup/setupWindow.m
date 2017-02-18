@@ -8,11 +8,11 @@ window.screenNumber = max(Screen('Screens')); % Choose a monitor to display on
 window.res = Screen('Resolution',window.screenNumber); % get screen resolution
 
 try
-%     Screen('Preference', 'ConserveVRAM', 4096);
-
+    %     Screen('Preference', 'ConserveVRAM', 4096);
+    
     PsychImaging('PrepareConfiguration');
-%     PsychImaging('AddTask', 'LeftView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
-%     PsychImaging('AddTask', 'RightView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
+    %     PsychImaging('AddTask', 'LeftView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
+    %     PsychImaging('AddTask', 'RightView', 'StereoCrosstalkReduction', 'SubtractOther', 1);
     
     
     window.bgColor = GrayIndex(window.screenNumber);
@@ -23,7 +23,8 @@ try
     %         window.bgColor, round(window.screen_scale),...
     %         [], []); % final value is stereo mode. To be adjusted
     Screen('BlendFunction', window.pointer, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    Priority(MaxPriority(window.pointer));
+    %     Priority(MaxPriority(window.pointer));
+    Priority(1);
     
     
     % define some landmark locations to be used throughout

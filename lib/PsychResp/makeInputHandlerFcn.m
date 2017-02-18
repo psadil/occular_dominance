@@ -10,10 +10,10 @@ if ~strcmp(handlerName, 'user')
     switch handlerName
         case 'freeResponseRobot'
             n = 1;
-            handlerFcn = @GoodFreeResponseRobot;
+            handlerFcn = @FreeResponseRobot;
             
         case 'simpleKeypressRobot'
-            handlerFcn = @GoodSimpleKeypressRobot;
+            handlerFcn = @SimpleKeypressRobot;
             
         otherwise
             error(['Unknown handlerName "' handlerName '"']);
@@ -26,7 +26,6 @@ end
     function [keys_pressed, press_times] = checkKeys(device, varargin)
         % The response string and RT vector are returned (updated with any input
         % given by the participant) as well as the advance and redraw flags.
-        %
         
         % Check the KbQueue for presses
         [ pressed, press_times]=KbQueueCheck(device);
@@ -36,13 +35,13 @@ end
             % sort the recorded press time to find their linear position
             [~, ind] = sort(press_times(press_times~=0));
             % Arrange the keycodes according to the order they were pressed
-            keys_pressed = keys_pressed(ind(1));
+            keys_pressed = keys_pressed(ind);
         else
             keys_pressed = [];
         end
     end
 
-    function [keys_pressed, press_times] = GoodFreeResponseRobot(device, answer, delay)
+    function [keys_pressed, press_times] = FreeResponseRobot(device, answer)
         
         % This function is a wrapper around checkKeys, which provides
         % automatic keyboard input by simulating a keypress of each character in the given response string
@@ -70,13 +69,6 @@ end
         % a new answer to input) and so we begin with inputing the first character of
         % the new answer.
         
-        if nargin < 3
-            delay=0;
-        end
-        
-        if n == 1
-            WaitSecs(delay);
-        end
         
         if strcmp(answer, 'SPACE')
             rob.keyPress(java.awt.event.KeyEvent.VK_SPACE);
@@ -96,25 +88,25 @@ end
         [keys_pressed, press_times] = checkKeys(device);
     end
 
-    function [keys_pressed, press_times] = GoodSimpleKeypressRobot(device, answer, delay)
+    function [keys_pressed, press_times] = SimpleKeypressRobot(device, answer)
         
-        WaitSecs(delay);
+        inputemu('key_normal',answer);
         
-        if strcmp(answer, 'SPACE')
-            rob.keyPress(java.awt.event.KeyEvent.VK_SPACE);
-            rob.keyRelease(java.awt.event.KeyEvent.VK_SPACE);
-        elseif strcmp(answer, 'LeftArrow')
-            rob.keyPress(java.awt.event.KeyEvent.VK_LEFT);
-            rob.keyRelease(java.awt.event.KeyEvent.VK_LEFT);
-        elseif strcmp(answer, 'RightArrow')
-            rob.keyPress(java.awt.event.KeyEvent.VK_RIGHT);
-            rob.keyRelease(java.awt.event.KeyEvent.VK_RIGHT);
-        else strcmp(answer, 'SPACE')
-
-            eval([ 'rob.keyPress(java.awt.event.KeyEvent.VK_', upper(answer(1)), ');' ]);
-            eval([ 'rob.keyRelease(java.awt.event.KeyEvent.VK_', upper(answer(1)), ');' ]);
-        end
-        
+        %         if strcmp(answer, 'SPACE')
+        %             rob.keyPress(java.awt.event.KeyEvent.VK_SPACE);
+        %             rob.keyRelease(java.awt.event.KeyEvent.VK_SPACE);
+        %         elseif strcmp(answer, 'LeftArrow')
+        %             %             rob.keyPress(java.awt.event.KeyEvent.VK_LEFT);
+        %             %             rob.keyRelease(java.awt.event.KeyEvent.VK_LEFT);
+        %             inputemu('\LEFT');
+        %         elseif strcmp(answer, 'RightArrow')
+        %             %             rob.keyPress(java.awt.event.KeyEvent.VK_RIGHT);
+        %             %             rob.keyRelease(java.awt.event.KeyEvent.VK_RIGHT);
+        %             inputemu('\RIGHT');
+        %         else
+        %             eval([ 'rob.keyPress(java.awt.event.KeyEvent.VK_', upper(answer(1)), ');' ]);
+        %             eval([ 'rob.keyRelease(java.awt.event.KeyEvent.VK_', upper(answer(1)), ');' ]);
+        %         end
         
         [keys_pressed, press_times] = checkKeys(device);
     end

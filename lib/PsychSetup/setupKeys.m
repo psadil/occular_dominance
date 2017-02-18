@@ -5,11 +5,11 @@ function [ keys ] = setupKeys(  )
 codes = zeros(1,256);
 
 keys.arrows = codes;
-keys.arrows(KbName({'LeftArrow','RightArrow'})) = 1;
+keys.arrows(KbName({'4','6'})) = 1;
 keys.escape = codes;
 keys.escape(KbName('ESCAPE')) = 1;
-keys.space = codes;
-keys.space(KbName({'space'})) = 1;
+keys.enter = codes;
+keys.enter(KbName({'Return'})) = 1;
 
 end
 

@@ -16,7 +16,11 @@ input = ip.Results;
 
 
 %% setup
-constants = setupConstants(input, ip);
+[constants, exit_stat] = setupConstants(input, ip);
+if exit_stat==1
+    windowCleanup(constants);
+    return
+end
 expParams = setupExpParams(input.debugLevel);
 
 demographics = getDemographics(constants);
@@ -33,28 +37,28 @@ responseHandler = makeInputHandlerFcn(input.responder);
 
 %% main experimental loop
 
-giveInstruction(window, keys, responseHandler, constants, expParams);
+giveInstruction(window, keys, responseHandler, constants);
 
-answers = [{'LeftArrow'}, {'RightArrow'}];
+answers = [{'\LEFT'}, {'\RIGHT'}];
 for trial = 1:expParams.nTrials
     
     % function that presents arrow stim and collects response
     [ data.response(trial), data.rt(trial), data.tStart(trial), data.tEnd(trial), exit_flag] = ...
         elicitArrowResponse(window, responseHandler,...
         arrows(data.correctDirection(trial)).tex, data.rightEye(trial),...
-        keys, mondrians, expParams, constants, answers(data.correctDirection(trial)),...
+        keys, mondrians, expParams, constants, answers{data.correctDirection(trial)},...
         data.bothEyes(trial));
     
     if exit_flag==1
         break;
     end
     
-    if mod(trial,10)==0 && trial ~= expParams.nTrial
-        showReminder(window, ['You have completed', num2str(trial), 'out of', num2str(expParams.nTrials), 'trials'],...
-            keys, constants, responseHandler, expParams);
+    if mod(trial,10)==0 && trial ~= expParams.nTrials
+        showReminder(window, ['You have completed ', num2str(trial), ' out of ', num2str(expParams.nTrials), ' trials'],...
+            keys, constants, responseHandler);
         
         showReminder(window, 'Remember to keep your eyes focusd on the center white square',...
-            keys, constants, responseHandler, expParams);
+            keys, constants, responseHandler);
     end
     
     % inter-trial-interval
@@ -63,18 +67,18 @@ for trial = 1:expParams.nTrials
 end
 
 %% save data and exit
-writetable(data, [constants.fName, '.csv'])
+writetable(data, [constants.fName, '.csv']);
 
 % end of the experiment
-windowCleanup(constants)
+windowCleanup(constants);
 end
 
-function [] = giveInstruction(window, keys, responseHandler, constants, expParams)
+function [] = giveInstruction(window, keys, responseHandler, constants)
 
 showReminder(window, 'Use the arrow keys to say which direction you think the arrow faced.',...
-    keys,constants,responseHandler,expParams);
+    keys,constants,responseHandler);
 showReminder(window, 'Keep your eyes focused on the center white square',...
-    keys,constants,responseHandler,expParams);
+    keys,constants,responseHandler);
 
 iti(window, 1);
 
@@ -90,31 +94,36 @@ Screen('Flip', window.pointer);
 
 end
 
-function [] = showReminder(window, prompt, keys,constants,responseHandler,expParams)
+function [] = showReminder(window, prompt, keys,constants,responseHandler)
 
 for eye = 0:1
     Screen('SelectStereoDrawBuffer',window.pointer,eye);
     DrawFormattedText(window.pointer,prompt,...
         'center', 'center');
-    DrawFormattedText(window.pointer, '[Press Space to Continue]', ...
+    DrawFormattedText(window.pointer, '[Press Enter to Continue]', ...
         'center', window.winRect(4)*.8);
 end
 Screen('Flip', window.pointer);
-waitForSpace(keys,constants,responseHandler, expParams);
+waitForEnter(keys,constants,responseHandler);
 
 end
 
-function [] = waitForSpace(keys,constants,responseHandler, expParams)
+function [] = waitForEnter(keys,constants,responseHandler)
 
-KbQueueCreate(constants.device, keys.space);
+KbQueueCreate(constants.device, keys.enter);
 KbQueueStart(constants.device);
+
 while 1
     
-    [keys_pressed, ~] = responseHandler(constants.device, 'SPACE', expParams.robotDelay);
+    [keys_pressed, ~] = responseHandler(constants.device, '\ENTER');
     
     if ~isempty(keys_pressed)
         break;
     end
 end
+
+KbQueueStop(constants.device);
+KbQueueFlush(constants.device);
+KbQueueRelease(constants.device);
 end
 

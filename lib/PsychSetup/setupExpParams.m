@@ -2,16 +2,16 @@ function expParams = setupExpParams( debugLevel )
 %setupDebug setup values specific to debug levels
 
 % some defaults
-expParams.robotDelay = 0;
 expParams.screen_scale = []; % show at full screen
 expParams.stereoMode = 1;
+expParams.respDelay = 0;
 
 %% Set parameters that change based on debug level
 switch debugLevel
     
     case 0
         % Level 0: normal experiment
-        expParams.mondrianHertz = 8;
+        expParams.mondrianHertz = 120/8;
         expParams.iti = 1; % seconds to wait between each trial
         expParams.nTrials = 150;
         expParams.arrowDur = 100; % max duration until arrows are at full contrast
@@ -19,18 +19,18 @@ switch debugLevel
         % Level 1: Run through all trials giving correct answers. Speed at
         % anticipanted slowest subject speed
         
-        expParams.mondrianHertz = 8;
+        expParams.mondrianHertz = 120/8;
         expParams.iti = 1;
-        expParams.nTrials = 100;
+        expParams.nTrials = 150;
         expParams.arrowDur = 100;
-        expParams.robotDelay = 10;
+        expParams.respDelay = 10*8;
     case 2
         % Level 2: Like 1, but super fast
-        expParams.mondrianHertz = 8;
+        expParams.mondrianHertz = 120/10;
         expParams.iti = .1;
-        expParams.nTrials = 100;
-        expParams.arrowDur = .1;
-        expParams.robotDelay = .2;
+        expParams.nTrials = 150;
+        expParams.arrowDur = 100; % should be two flips
+        expParams.respDelay = 2;
 end
 
 
